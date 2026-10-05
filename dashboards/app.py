@@ -34,14 +34,15 @@ def _():
     import polars as pl
 
     LOCAL_PARQUEDIT_PATH = Path(__file__).resolve().parent
-    return LOCAL_PARQUEDIT_PATH, ParquEdit, pl
+    return ParquEdit, pl
 
 
 @app.cell
-def _(LOCAL_PARQUEDIT_PATH, ParquEdit):
+def _(ParquEdit):
     import html
     import numbers
     import marimo as mo
+    import os
 
     reasons = [
         "OTHER_SOURCE",
@@ -53,7 +54,8 @@ def _(LOCAL_PARQUEDIT_PATH, ParquEdit):
     ]
     get_refresh, set_refresh = mo.state(0)
 
-    con = ParquEdit().local(path=LOCAL_PARQUEDIT_PATH)
+    is_dapla_prod = os.environ.get("DAPLA_ENVIRONMENT", "").lower() == "prod"
+    con = ParquEdit() if is_dapla_prod else ParquEdit().local()
     return con, get_refresh, html, mo, numbers, reasons, set_refresh
 
 
@@ -101,7 +103,6 @@ def intro_panel(connection_error, mo, tables):
     4. Oppgi årsaken til endringen, og legg eventuelt til en kommentar.
     """
     )
-
     return
 
 
@@ -118,7 +119,9 @@ def table_selector_panel(connection_error, mo, tables):
     mo.vstack(
         [
             mo.md("### 1. Velg tabell"),
-            mo.md("Velg tabellen du vil jobbe med før du søker etter raden som skal redigeres."),
+            mo.md(
+                "Velg tabellen du vil jobbe med før du søker etter raden som skal redigeres."
+            ),
             table_selector,
         ]
     )
@@ -277,9 +280,13 @@ def editor_panel(
             input_element = mo.ui.number(value=int(value), label="")
         elif isinstance(value, numbers.Real) and not isinstance(value, bool):
             input_element = mo.ui.number(value=float(value), label="")
-        elif isinstance(sample_value, numbers.Integral) and not isinstance(sample_value, bool):
+        elif isinstance(sample_value, numbers.Integral) and not isinstance(
+            sample_value, bool
+        ):
             input_element = mo.ui.number(value=None, label="")
-        elif isinstance(sample_value, numbers.Real) and not isinstance(sample_value, bool):
+        elif isinstance(sample_value, numbers.Real) and not isinstance(
+            sample_value, bool
+        ):
             input_element = mo.ui.number(value=None, label="")
         else:
             input_element = mo.ui.text(
@@ -289,7 +296,9 @@ def editor_panel(
             )
 
         field_elements[col] = input_element
-        current_display = "-" if value is None else f"<code>{html.escape(str(value))}</code>"
+        current_display = (
+            "-" if value is None else f"<code>{html.escape(str(value))}</code>"
+        )
         row_blocks.append(
             f"""
     <div style="display:grid; grid-template-columns: minmax(12rem, 1.1fr) minmax(12rem, 1.1fr) minmax(16rem, 1.6fr); gap:1rem; align-items:center; padding:0.6rem 0; border-bottom:1px solid var(--mo-border-color);">
@@ -319,9 +328,11 @@ def editor_panel(
         selected_header = f"""
     ### 3. Rediger valgt rad
 
-    Du redigerer `rowid={selected_row['rowid']}`.
+    Du redigerer `rowid={selected_row["rowid"]}`.
     """
-        selected_message = "Sammenlign eksisterende og nye verdier før du lagrer endringen."
+        selected_message = (
+            "Sammenlign eksisterende og nye verdier før du lagrer endringen."
+        )
 
     editor_template = f"""
     {selected_header}
@@ -333,7 +344,7 @@ def editor_panel(
       <div><strong>Nåværende verdi</strong></div>
       <div><strong>Ny verdi</strong></div>
     </div>
-    {''.join(row_blocks)}
+    {"".join(row_blocks)}
 
     <div style="border:1px solid var(--mo-border-color); border-radius:0.75rem; padding:1rem; margin-top:1rem;">
       <div><strong>Endringsinformasjon</strong></div>
@@ -348,14 +359,18 @@ def editor_panel(
     </div>
     """
 
-    edit_form = mo.md(editor_template).batch(**field_elements).form(
-        submit_button_label="Lagre endringer i Parquedit",
-        submit_button_disabled=selected_row is None,
-        submit_button_tooltip=(
-            "Velg en rad i tabellen for å kunne lagre endringer."
-            if selected_row is None
-            else None
-        ),
+    edit_form = (
+        mo.md(editor_template)
+        .batch(**field_elements)
+        .form(
+            submit_button_label="Lagre endringer i Parquedit",
+            submit_button_disabled=selected_row is None,
+            submit_button_tooltip=(
+                "Velg en rad i tabellen for å kunne lagre endringer."
+                if selected_row is None
+                else None
+            ),
+        )
     )
 
     edit_form
@@ -374,7 +389,11 @@ def _(
     table_selector,
 ):
 
-    if selected_row is not None and edit_form is not None and edit_form.value is not None:
+    if (
+        selected_row is not None
+        and edit_form is not None
+        and edit_form.value is not None
+    ):
         form_data = edit_form.value
         changes = {
             col: form_data[col]
@@ -403,9 +422,10 @@ def history_panel(con, get_refresh, mo, table_selector):
     history = con.get_edits(table_name=table_selector.value)
     mo.stop(history is None or history.empty, mo.md(""))
 
-    history = history.sort_values("snapshot_time", ascending=False).reset_index(drop=True)
+    history = history.sort_values("snapshot_time", ascending=False).reset_index(
+        drop=True
+    )
     row_index_lookup = {str(index): index for index in history.index}
-
 
     def format_hover_value(column_name, value):
         if value is None:
@@ -416,7 +436,6 @@ def history_panel(con, get_refresh, mo, table_selector):
     """
             return column_name + ":" + separator + formatted
         return f"{column_name}: {value}"
-
 
     def style_history_cell(row_id, column_name, value):
         row_index = row_index_lookup.get(str(row_id), 0)
@@ -468,7 +487,9 @@ def history_panel(con, get_refresh, mo, table_selector):
             "change_comment": "Valgfri kommentar knyttet til endringen.",
         },
         style_cell=style_history_cell,
-        hover_template=lambda row_id, column_name, value: format_hover_value(column_name, value),
+        hover_template=lambda row_id, column_name, value: format_hover_value(
+            column_name, value
+        ),
     )
     mo.vstack(
         [
@@ -476,7 +497,6 @@ def history_panel(con, get_refresh, mo, table_selector):
             history_view,
         ]
     )
-
     return
 
 

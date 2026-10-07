@@ -113,7 +113,7 @@ def _(ParquEdit):
 
 
 @app.cell
-def status_banner(con, mo):
+def status_banner(con, DAPLA_TEAM, mo):
     try:
         tables = con.list_tables()
         connection_error = None
@@ -123,14 +123,16 @@ def status_banner(con, mo):
 
     if connection_error:
         status = mo.md(
-            "## Kunne ikke koble til Parquedit\n\n"
+            f"## Kunne ikke koble til Parquedit\n\n"
+            f"Team: *{DAPLA_TEAM}*\n\n"
             "Sjekk:\n\n"
             "- At du har startet tjenesten med riktig team\n"
             "- At Parquedit er skrudd på for teamet i Dapla Ctrl"
         )
     elif not tables:
         status = mo.md(
-            "## Fant ingen Parquedit-tabeller\n\n"
+            f"## Fant ingen Parquedit-tabeller\n\n"
+            f"Team: *{DAPLA_TEAM}*\n\n"
             "Sjekk at du har startet tjenesten med riktig team"
         )
     else:

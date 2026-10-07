@@ -6,10 +6,12 @@
 #     "ssb-parquedit==0.1.0",
 #     "marimo-studio==0.2.3"
 # ]
-# requires-python = ">=3.10,<3.15"
+# requires-python = ">=3.12,<3.15"
 #
 # [tool.marimo-studio]
-# default = "dashboard"
+# view_root = "views"
+# runtime = "server"
+# default = "parqueditor"
 #
 # [tool.marimo-studio.cells]
 # cell-3 = {ref = "cell:v1:c235fd4e1fa29b1c5f6db78eb8c4cc42c411e837a797133ca23aded613536c16:c235fd4e1fa29b1c5f6db78eb8c4cc42c411e837a797133ca23aded613536c16:0"}

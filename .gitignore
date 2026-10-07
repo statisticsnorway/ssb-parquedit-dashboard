@@ -215,3 +215,9 @@ marimo/_lsp/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Parqueditor dashboard
+dashboards/views/.locks/
+dashboards/views/.owners/
+dashboards/views/parqueditor/.artifacts/
+__marimo__/

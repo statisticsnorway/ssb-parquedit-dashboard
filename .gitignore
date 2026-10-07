@@ -221,3 +221,8 @@ dashboards/views/.locks/
 dashboards/views/.owners/
 dashboards/views/parqueditor/.artifacts/
 __marimo__/
+
+# System
+ssb-parquedit/
+.direnv/
+.envrc

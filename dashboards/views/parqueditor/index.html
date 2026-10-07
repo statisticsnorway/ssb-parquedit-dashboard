@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Parqueditor · Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
     <script
       src="https://cdn.jsdelivr.net/npm/@unocss/runtime@66.10.5/uno.global.js"
       integrity="sha384-iX+gEyr2u+Tmd8XxbySu2iimH7dOfTZn9xahADx38mJHYzAI2CJUCo5+PPGOSU2b"
@@ -140,12 +141,14 @@
       }
 
       .content-column {
-        width: 100%;
-        max-width: 76rem;
+        width: 80vw;
+        max-width: 80vw;
+        min-width: 0;
         margin-inline: auto;
       }
 
       .ssb-card {
+        min-width: 0;
         background: var(--ssb-white);
         border: 1px solid var(--ssb-border);
         border-radius: 0.75rem;
@@ -320,7 +323,7 @@
     </style>
   </head>
   <body>
-    <main id="app-shell" class="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+    <main id="app-shell" class="mx-auto w-full max-w-none px-4 py-6 sm:px-6 lg:px-8">
       <div class="view-shell">
         <header class="view-header content-column">
           <a class="brand-link" href="https://www.ssb.no/" target="_blank" rel="noreferrer" aria-label="Statistisk sentralbyrå">

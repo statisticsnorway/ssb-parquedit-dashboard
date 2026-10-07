@@ -103,8 +103,13 @@ def _(ParquEdit):
     get_refresh, set_refresh = mo.state(0)
 
     is_dapla_prod = os.environ.get("DAPLA_ENVIRONMENT", "").lower() == "prod"
+    if not is_dapla_prod:
+        os.environ["DAPLA_USER"] = "local-mock-user@ssb.no"
+    DAPLA_TEAM = (
+        os.environ["DAPLA_TEAM"] if is_dapla_prod else "local-mock-team"
+    )
     con = ParquEdit() if is_dapla_prod else LocalParquEdit().with_mock_tables()
-    return con, get_refresh, html, mo, numbers, reasons, set_refresh
+    return DAPLA_TEAM, con, get_refresh, html, mo, numbers, reasons, set_refresh
 
 
 @app.cell
@@ -177,7 +182,7 @@ def table_selector_panel(connection_error, mo, tables):
 
 
 @app.cell(hide_code=True)
-def table_metadata_panel(con, get_refresh, html, mo, table_selector):
+def table_metadata_panel(con, DAPLA_TEAM, get_refresh, html, mo, table_selector):
 
     _ = get_refresh()
     product_history = con.get_edits(table_name=table_selector.value)
@@ -209,6 +214,11 @@ def table_metadata_panel(con, get_refresh, html, mo, table_selector):
     product_text = product_name_value or "Ikke tilgjengelig"
     unique_id_text = user_defined_id_text or "Ikke tilgjengelig"
     metadata_items = [
+        (
+            "Team",
+            DAPLA_TEAM,
+            "Teamet som eier denne Parquedit-tabellen.",
+        ),
         (
             "Dataprodukt",
             product_text,
@@ -506,6 +516,7 @@ def history_panel(con, get_refresh, mo, table_selector):
         show_download=False,
         show_data_types=False,
         visible_columns=[
+            "rowid",
             "snapshot_time",
             "old_values",
             "new_values",
@@ -518,6 +529,7 @@ def history_panel(con, get_refresh, mo, table_selector):
         },
         wrapped_columns=["old_values", "new_values", "change_comment"],
         column_widths={
+            "rowid": 120,
             "snapshot_time": 150,
             "old_values": 300,
             "new_values": 300,
@@ -527,6 +539,7 @@ def history_panel(con, get_refresh, mo, table_selector):
         },
         max_height=420,
         header_tooltip={
+            "rowid": "Den unike identifikatoren til raden som ble endret.",
             "snapshot_time": "Tidspunktet da endringen ble registrert.",
             "old_values": "Verdiene før endringen ble lagret.",
             "new_values": "Verdiene etter endringen ble lagret.",

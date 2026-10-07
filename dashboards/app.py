@@ -105,9 +105,7 @@ def _(ParquEdit):
     is_dapla_prod = os.environ.get("DAPLA_ENVIRONMENT", "").lower() == "prod"
     if not is_dapla_prod:
         os.environ["DAPLA_USER"] = "local-mock-user@ssb.no"
-    DAPLA_TEAM = (
-        os.environ["DAPLA_TEAM"] if is_dapla_prod else "local-mock-team"
-    )
+    DAPLA_TEAM = os.environ["DAPLA_TEAM"] if is_dapla_prod else "local-mock-team"
     con = ParquEdit() if is_dapla_prod else LocalParquEdit().with_mock_tables()
     return DAPLA_TEAM, con, get_refresh, html, mo, numbers, reasons, set_refresh
 
@@ -486,6 +484,19 @@ def history_panel(con, get_refresh, mo, table_selector):
         drop=True
     )
     row_index_lookup = {str(index): index for index in history.index}
+    preferred_columns = [
+        "snapshot_time",
+        "change_event_reason",
+        "changed_by",
+        "change_comment",
+        "rowid",
+        "old_values",
+        "new_values",
+    ]
+    history_columns = preferred_columns + [
+        column for column in history.columns if column not in preferred_columns
+    ]
+    history = history[history_columns]
 
     def format_hover_value(column_name, value):
         if value is None:
@@ -517,26 +528,18 @@ def history_panel(con, get_refresh, mo, table_selector):
         label="### 4. Endringshistorikk",
         show_download=False,
         show_data_types=False,
-        visible_columns=[
-            "rowid",
-            "snapshot_time",
-            "old_values",
-            "new_values",
-            "changed_by",
-            "change_event_reason",
-            "change_comment",
-        ],
+        visible_columns=preferred_columns,
         format_mapping={
             "snapshot_time": lambda value: value.strftime("%d.%m.%Y %H:%M")
         },
         wrapped_columns=["old_values", "new_values", "change_comment"],
         column_widths={
-            "rowid": 120,
+            "rowid": 90,
             "snapshot_time": 150,
             "old_values": 300,
             "new_values": 300,
             "changed_by": 190,
-            "change_event_reason": 220,
+            "change_event_reason": 160,
             "change_comment": 260,
         },
         max_height=420,

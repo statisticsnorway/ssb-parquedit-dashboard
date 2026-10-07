@@ -49,6 +49,10 @@
         --gdg-border-color: #c3dcdc;
       }
 
+      marimo-cell[name="status_banner"]:has([data-marimo-cell-output]:empty) {
+        display: none;
+      }
+
       body {
         margin: 0;
         background: var(--ssb-bg);
@@ -405,7 +409,7 @@
         </header>
 
         <div class="content-column">
-          <marimo-cell name="status_banner"></marimo-cell>
+          <marimo-cell name="status_banner" data-skeleton="none"></marimo-cell>
         </div>
 
         <section class="ssb-card content-column" aria-label="Introduksjon">

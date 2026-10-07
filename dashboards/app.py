@@ -129,7 +129,7 @@ def status_banner(con, mo):
             "Sjekk at du har startet tjenesten med riktig team"
         )
     else:
-        status = mo.md("")
+        status = None
     status
     return connection_error, tables
 

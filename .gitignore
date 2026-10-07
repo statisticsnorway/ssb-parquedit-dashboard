@@ -224,5 +224,6 @@ __marimo__/
 
 # System
 ssb-parquedit/
+marimo-studio/
 .direnv/
 .envrc

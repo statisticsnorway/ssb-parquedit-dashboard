@@ -1,0 +1,34 @@
+@import url("https://cdn.jsdelivr.net/npm/@digdir/designsystemet-css@1.23.0/dist/index.css");
+@import url("https://cdn.jsdelivr.net/npm/@statisticsnorway/design-css@0.2.4/dist/theme/ssb.css");
+@import url("https://cdn.jsdelivr.net/npm/@statisticsnorway/design-css@0.2.4/dist/src/fonts/fonts.css");
+
+/* Designsystemet-style tables for mo.ui.table output */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--ds-font-family);
+  font-size: var(--ds-body-sm-font-size, 0.875rem);
+  color: var(--ds-color-neutral-text-default);
+}
+
+thead th {
+  text-align: left;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-bottom: 2px solid var(--ds-color-neutral-border-strong);
+  background: var(--ds-color-neutral-background-default);
+}
+
+tbody td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--ds-color-neutral-border-subtle);
+}
+
+tbody tr:nth-child(even) {
+  background: var(--ds-color-neutral-background-tinted);
+}
+
+tbody tr:hover {
+  background: var(--ds-color-neutral-surface-tinted);
+}

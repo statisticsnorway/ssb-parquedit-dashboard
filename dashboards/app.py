@@ -3,8 +3,8 @@
 #     "faker>=37.0.0,<38.0.0",
 #     "marimo>=0.25.0",
 #     "polars>=1.38.1,<2.0.0",
-#     "ssb-parquedit==0.1.0",
-#     "marimo-studio==0.2.3"
+#     "ssb-parquedit==0.1.3",
+#     "marimo-studio==0.2.3",
 # ]
 # requires-python = ">=3.12,<3.15"
 #
